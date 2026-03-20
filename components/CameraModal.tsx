@@ -12,13 +12,16 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 interface CameraModalProps {
   visible: boolean;
   onClose: () => void;
-  onPhotoTaken: (uri: string) => void;
+  onPhotoTaken: (uri: string, base64?: string) => void;
+  /** true이면 촬영 결과를 base64로도 전달 (웹뷰 파일 선택 연동용) */
+  returnBase64?: boolean;
 }
 
 export default function CameraModal({
   visible,
   onClose,
   onPhotoTaken,
+  returnBase64 = false,
 }: CameraModalProps) {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
@@ -57,9 +60,11 @@ export default function CameraModal({
     if (cameraRef.current && !isTaking) {
       setIsTaking(true);
       try {
-        const photo = await cameraRef.current.takePictureAsync();
+        const photo = await cameraRef.current.takePictureAsync(
+          returnBase64 ? { base64: true } : undefined
+        );
         if (photo?.uri) {
-          onPhotoTaken(photo.uri);
+          onPhotoTaken(photo.uri, photo.base64 ?? undefined);
         }
       } catch (e) {
         console.error("Failed to take picture", e);

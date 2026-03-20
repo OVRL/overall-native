@@ -1,6 +1,7 @@
 export type BridgeActionType =
   | "GET_PUSH_TOKEN"
   | "OPEN_CAMERA"
+  | "OPEN_PHOTO_PICKER"
   | "REQUEST_PERMISSIONS"
   | "VIBRATE"
   | "OPEN_SETTINGS"
